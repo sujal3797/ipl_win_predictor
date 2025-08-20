@@ -6,7 +6,6 @@ A web application that predicts the real-time probability of a team winning an I
 
 ---
 
-![IPL Win Predictor Screenshot]
 <img width="1897" height="926" alt="image" src="https://github.com/user-attachments/assets/14c1813a-9b67-474e-b59f-5513a20e1ba0" />
 
 
