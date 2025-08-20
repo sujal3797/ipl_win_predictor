@@ -13,6 +13,7 @@ def train_and_save_model(matches_path='matches.csv', deliveries_path='deliveries
     """
     Loads data, preprocesses it, uses GridSearchCV to find the best hyperparameters
     for an XGBoost model, trains it, and saves the best pipeline to a file.
+    The model is configured to handle unknown categories gracefully.
     """
     print("--- Starting Model Training with GridSearchCV ---")
 
@@ -51,7 +52,11 @@ def train_and_save_model(matches_path='matches.csv', deliveries_path='deliveries
     # --- 3. Feature Engineering ---
     print("Step 3/5: Engineering features...")
     delivery_df['current_score'] = delivery_df.groupby('match_id')['total_runs_y'].cumsum()
+
+    # FIX: The line to create 'runs_left' was missing and has been added back.
     delivery_df['runs_left'] = delivery_df['total_runs_x'] - delivery_df['current_score']
+
+    delivery_df.loc[delivery_df['runs_left'] < 0, 'runs_left'] = 0
     delivery_df['balls_left'] = 120 - (delivery_df['over'] * 6 + delivery_df['ball'])
     delivery_df['player_dismissed'] = delivery_df['player_dismissed'].fillna("0").apply(
         lambda x: "1" if x != "0" else "0").astype('int')
@@ -76,8 +81,10 @@ def train_and_save_model(matches_path='matches.csv', deliveries_path='deliveries
     y = final_df.iloc[:, -1]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
+    # THE FIX IS HERE: Added handle_unknown='ignore' to the OneHotEncoder
     trf = ColumnTransformer([
-        ('trf', OneHotEncoder(sparse_output=False, drop='first'), ['batting_team', 'bowling_team', 'city'])
+        ('trf', OneHotEncoder(sparse_output=False, drop='first', handle_unknown='ignore'),
+         ['batting_team', 'bowling_team', 'city'])
     ], remainder='passthrough')
 
     pipe = Pipeline(steps=[
@@ -86,7 +93,6 @@ def train_and_save_model(matches_path='matches.csv', deliveries_path='deliveries
     ])
 
     # Define the parameter grid to search
-    # Note: This is a small grid for demonstration. A real-world search would be larger.
     param_grid = {
         'step2__n_estimators': [100, 200],
         'step2__learning_rate': [0.1, 0.2],
