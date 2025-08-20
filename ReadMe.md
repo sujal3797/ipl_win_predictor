@@ -2,11 +2,13 @@
 
 A web application that predicts the real-time probability of a team winning an Indian Premier League (IPL) match based on the current game state. This project demonstrates an end-to-end machine learning workflow, from data analysis and model training to building a web API and deploying a live, interactive frontend.
 
-**Live Application:** [https://ipl-win.netlify.app/]
+**Live Application:** https://ipl-win.netlify.app/
 
 ---
 
 ![IPL Win Predictor Screenshot]
+<img width="1897" height="926" alt="image" src="https://github.com/user-attachments/assets/14c1813a-9b67-474e-b59f-5513a20e1ba0" />
+
 
 ## Features
 
@@ -81,4 +83,4 @@ The project is built on a decoupled frontend-backend architecture.
 - The **Flask backend** is deployed as a Web Service on **Render**. The server is run using the `gunicorn app:app` command.
 - The **static frontend** is deployed on **Netlify**, which is connected directly to the GitHub repository for continuous deployment.
 
-**Backend URL:** [**Your Backend URL Here**]
+**Backend URL:** https://ipl-predictor-sujal.onrender.com
